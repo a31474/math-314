@@ -1,0 +1,14 @@
+把文件放到 typst 定义的 @local 路径下即可使用
+
+若已安装 typst 命令行工具，
+可使用 
+typst init @local/math-314:0.3.0 my-project
+来初始化一模板项目并命名为my-project
+
+也可放到 @preview 下使用
+需更改 math-314/0.3.0/template/main.typ 文件的 
+#import "@local/math-314:0.3.0": *
+为
+#import "@preview/math-314:0.3.0": *
+再使用 
+typst init @preview/math-314:0.3.0 my-project
