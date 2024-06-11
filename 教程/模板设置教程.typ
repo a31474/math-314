@@ -1,27 +1,6 @@
 #import "@local/math-314:0.3.0": *
 
-#show heading.where(): it => {
-  set text(fill: rgb(60, 113, 183))
-  // 目录title 为 heading 且 numbering 为 none
-  if it.numbering == none {
-    it
-  } else if it.level == 1 {
-    align(center)[#it]
-  } else if it.level == 2 {
-    let it-numbering = numbering(it.numbering, ..counter(heading).at(it.location()))
-    table(
-      columns: 1,
-      stroke: none,
-      table.cell(
-        stroke: (bottom: 1pt + rgb(60, 113, 183)),
-        text(size: 1.2em)[#math.section] + it-numbering,
-      ),
-      h(1em) + it.body + h(2em),
-    )
-  } else {
-    it
-  }
-}
+#show: heading-style-color
 
 #show: doc => conf-2(
   doc,
@@ -56,13 +35,18 @@
 ```
 #import "@preview/math-314:0.3.0": *
 ```
+或者直接导入 lib.typ
+````
+#import "lib.typ": *
+````
+
 然后加入以下即可使用
 ```
 #show: doc => conf-2(
   doc,
 )
 ```
-或使用 conf-1
+或者使用 conf-1
 ```
 #import "@local/math-314:0.3.0": *
 #show: doc => conf-1(
@@ -73,32 +57,33 @@
 
 #text(fill: green, weight: "bold")[conf-1 : ] *不区分奇偶页, 中间智能显示当前页面一级或二级标题, 且页面居中*
 
-#text(fill: green, weight: "bold")[conf-2 : ] *奇数页显示一级标题，偶数页显示二级标题，奇数页面偏右。偶数页页满*
+#text(fill: green, weight: "bold")[conf-2 : ] *奇数页显示一级标题，偶数页显示二级标题，奇数页面偏右，偶数页偏左*
 
 若要自定义细节, 请自行传入参数
+
+以下为一与默认不同的配置
 ```
 #show: doc => conf-2(
   doc,
-  cover-fun: my-cover-fun,
+  cover-fun: my-cover-fun(),
   math-font: "XITS Math",
   heading-numbering: my-heading-numbering,
-  outline-fun: my-outline-fun,
+  outline-fun: my-outline-fun(),
   page-set: my-page-set,
   text-set: my-text-set,
   par-set: my-par-set,
   math-equation-i-figured-level: 1,
+  math-fun-update-level: 1,
 )
 ```
 == 注意事项
 === #text(fill: red, weight: "bold")[注意事项1]
-#text(fill: red, weight: "bold")[本模板有大量预设，但可能用户对某些设置有其他需求，故几乎所有参数都支持更改
+#text(fill: red, weight: "bold")[本模板有许多预设，考虑用户对某些设置可能会有其他需求，故特地让大部分参数都可以更改
 
-  下面为详细的修改方式，可按需查询]
+  第 2 章为详细的修改方式，可按需查询]
 
 === #text(fill: blue, weight: "bold")[注意事项2]
 #text(fill: blue, weight: "bold")[因为更改了默认字体为思源宋体(Source Han Serif SC)
-
-  更改了默认数学字体为 "XITS Math"
 
   若没有对应字体可能显示错误]
 
@@ -107,34 +92,30 @@
 
 *除第一个一级标题外，在每个一级标题前*
 
-*可使用* ```#page-to-odd()```
-
-*或* ```#page-to-odd-blank()```
-
+*可使用* 
+```
+#pagebreak(to: "odd")
+```
 *来使一级标题换页到奇数页*
 
-```#page-to-odd()``` *过度页带页眉*
-
-```#page-to-odd-blank()``` *过渡页不带页眉*
-
-#text(fill: red, weight: "bold")[不使用也可, 但本强迫症表示所有的一级标题不在奇数页上很难受]
+#text(fill: red, weight: "bold")[不使用也可, 但可能页眉的标题显示不对]
 
 *例*
 ```
 = 第一章
 
-#page-to-odd()
+#pagebreak(to: "odd")
 = 第二章
 ```
 
 === typst 命令行使用
-若已安装 typst 命令行工具，可使用
+若已安装 typst 命令行工具，并已放置到 \@local 下，可使用
 ```sh
 typst init @local/math-314:0.3.0 my-project
 ```
 来初始化一模板项目并命名为 my-project
-// #pagebreak()
-#page-to-odd()
+
+#pagebreak(to: "odd")
 = 默认参数
 == 封面
 封面可自定义
@@ -159,7 +140,7 @@ typst init @local/math-314:0.3.0 my-project
 
 自定义封面时,
 
-若使用了默认页眉，因为页眉有默认值，请如默认值一样，在封面函数内加上 #text(fill:red)[set page(header: none)]
+若使用了默认页眉，因为页眉有默认值，请如默认封面一样，在封面函数内加上 #text(fill:red)[set page(header: none)]
 
 若使用了默认目录，因为目录启用了页面计数，请在末尾加上 #text(fill:red)[counter(page).update(0)]
 来保证默认目录页面计数正常
@@ -193,46 +174,40 @@ typst init @local/math-314:0.3.0 my-project
 }
 ```
 == 标题样式
-本模板未配置标题样式的默认设置
-以下为一简单设置
-````
-#show heading.where(): it => {
-  // 目录title 为 heading 且 numbering 为 none
-  if it.numbering == none {
-    it
-  } else if it.level == 1 {
-    align(center)[#it]
-  } else if it.level == 2 {
-    align(center)[#it]
-  } else {
-    grid(columns: 2, h(1.8em), it)
-  }
-}
-````
+本模板提供一标题样式函数
 
-以下为推荐设置也是本文档配置
+使用方法
 ```
-#show heading.where(): it => {
-  set text(fill: rgb(60, 113, 183))
-  // 目录title 为 heading 且 numbering 为 none
-  if it.numbering == none {
-    it
-  } else if it.level == 1 {
-    align(center)[#it]
-  } else if it.level == 2 {
-    let it-numbering = numbering(it.numbering, ..counter(heading).at(it.location()))
-    table(
-      columns: 1,
-      stroke: none,
-      table.cell(
-        stroke: (bottom: 1pt + rgb(60, 113, 183)),
-        text(size: 1.2em)[#math.section] + it-numbering,
-      ),
-      h(1em) + it.body + h(2em),
-    )
-  } else {
-    it
+#show: heading-style-color
+#show: doc => conf-2(doc)
+```
+
+以下为默认标题样式的详细信息
+```
+#let heading-style-color(doc) = {
+  show heading.where(): it => {
+    set text(fill: rgb(60, 113, 183))
+    // 目录title 为 heading 且 numbering 为 none
+    if it.numbering == none {
+      it
+    } else if it.level == 1 {
+      align(center)[#it]
+    } else if it.level == 2 {
+      let it-numbering = numbering(it.numbering, ..counter(heading).at(it.location()))
+      table(
+        columns: 1,
+        stroke: none,
+        table.cell(
+          stroke: (bottom: 1pt + rgb(60, 113, 183)),
+          text(size: 1.2em)[#math.section] + it-numbering,
+        ),
+        h(1em) + it.body + h(2em),
+      )
+    } else {
+      it
+    }
   }
+  doc
 }
 ```
 == 目录
@@ -253,9 +228,19 @@ typst init @local/math-314:0.3.0 my-project
 ```
 
 自定义目录时，若使用了默认页眉，默认页眉对奇偶进行了区分，
-请如默认值一样，在目录函数最后加上
+请如默认目录一样，在目录函数最后加上本模板自定义的
 #text(fill: red)[page-to-odd-blank-first()]
 来使正文第一页在奇数页
+
+以下为 page-to-odd-blank-first() 的详细信息
+```
+#let page-to-odd-blank-first() = context {
+  v(-2em) + hide("占位")
+  if calc.odd(here().page()) {
+    page(header: none, numbering: none)[]
+  }
+}
+```
 
 == 页面设置
 以下为默认页面设置
@@ -278,7 +263,7 @@ typst init @local/math-314:0.3.0 my-project
 ```
 两个页眉函数
 
-#text(fill:red)[header-fun()] ： 不区分奇偶页 中间智能显示当前页面一级或二级标题
+#text(fill:red)[header-fun()] ： 不区分奇偶页，中间智能显示当前页面一级或二级标题
 
 #text(fill:red)[header-fun-2()] ：奇数页显示一级标题，偶数页显示二级标题
 
@@ -299,30 +284,44 @@ typst init @local/math-314:0.3.0 my-project
   justify: true,
 )
 ```
-== 数学字体
-默认为 #text(fill: blue)["XITS Math" ]，请自行修改
-```
-#import "@local/math-314:0.3.0": *
-#show: doc => conf-2(
-  doc,
-  math-font: "自定义数学字体",
-)
-```
 == 数学方程计数
 默认使用 #text(fill: blue)[i-figured] 包对数学方程进行计数
 $ a times b $
-默认计数到一级标题
+默认计数到二级标题
 ```
 #show: doc => conf-2(
   doc,
-  math-equation-i-figured-level: 1,
+  math-equation-i-figured-level: 2,
 )
 ```
-// #pagebreak()
-#page-to-odd()
+
+== 数学样式函数步进级别
+
+数学样式函数的计数器默认计数到二级标题
+```
+#show: doc => conf-2(
+  doc,
+  math-equation-i-figured-level: 2,
+)
+```
+示例
+```
+#dingli-1[]
+```
+#dingli-1[]
+#pagebreak(to: "odd")
+
+
+
 = 模板特色
 
 #text(red)[说实话就是没法给你改的模板参数]
+
+== 颜色
+默认页眉与标题样式都带颜色
+
+有需要可到源码自行注释
+
 == 数学方程计数
 默认开启数学方程计数，若不需要自行到 #text(green)[conf-1.typ] 和 #text(green)[conf-2.typ]
 
