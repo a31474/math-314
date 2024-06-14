@@ -70,7 +70,7 @@
       ""
     }
   } + it + h(1.8em)
-  math-fun-2-block(fill: color-box, text(fill: color-text, main) + body)
+  math-fun-2-block(fill: color-box, text(fill: color-text,weight: "bold", main) + body)
 } + fake-par
 #let dingyi-2 = math-fun-2.with("定义", counter-use: true, color-box: m-color.thin-green, color-text: m-color.green)
 #let dingli-2 = math-fun-2.with("定理", counter-use: true, color-box: m-color.thin-blue, color-text: m-color.light-blue)
