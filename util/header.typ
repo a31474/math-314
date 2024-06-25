@@ -25,7 +25,6 @@
 #let header-page-num-2() = {
   if coun-page-1.get().at(0) == 0 {
     [1]
-    coun-page-1.update(1)
   } else {
     counter(page).display("1")
   }
@@ -33,7 +32,6 @@
 #let header-page-num() = context {
   if coun-page-1.get().at(0) == 0 {
     [1/ #counter(page).final().at(0)]
-    coun-page-1.update(1)
   } else {
     counter(page).display("1 / 1", both: true)
   }
@@ -43,9 +41,7 @@
 #let header-rect(l, c, r) = rect(width: 100%, stroke: (bottom: 1pt + rgb(60, 113, 183)))[
   #grid(
     columns: (1fr, 1fr, 1fr),
-    align(left, l),
-    align(center, c),
-    align(right, r),
+    align(left, l), align(center, c), align(right, r),
   )
 ]
 
@@ -54,7 +50,7 @@
   [],
   header-heading(),
   header-page-num(),
-)
+) + coun-page-1.update(1)
 #let header-normal-2() = context {
   if calc.odd(here().page()) {
     header-rect(
@@ -69,7 +65,7 @@
       header-page-num-2(),
     )
   }
-}
+} + coun-page-1.update(1)
 
 // 页眉函数入口
 #let header-fun-2() = {
